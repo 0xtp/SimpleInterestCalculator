@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Simple Interest Calculator</title>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+</head>
+
+<body>
+    <input type="text" id="principal" />
+    <br />
+    <input type="text" id="rate" />
+    <br />
+    <input type="text" id="time" />
+    <br />
+    <button id="calculate" onclick="calculateInterest()">Calculate</button>
+    <br />
+    <label id="output"></label>
+
+    <script>
+        //Connecting with testrpc
+        var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+
+        //Setting a default account 
+        web3.eth.defaultAccount = web3.eth.accounts[0];
+
+        //Contract representation with ABI
+        var intrestContract = web3.eth.contract([
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "principal",
+                        "type": "int256"
+                    },
+                    {
+                        "name": "time",
+                        "type": "int256"
+                    },
+                    {
+                        "name": "rate",
+                        "type": "int256"
+                    }
+                ],
+                "name": "calculateSimpleIntrest",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "getSimpleIntrest",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "int256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ]);
+
+        //Instance of a contract (Contract address is from remix)
+        var contractInstance = intrestContract.at('0x45149a5b922b0f384be16241dd55524b6566987e');
+
+        var principal = document.getElementById("principal");
+
+        var rate = document.getElementById("rate");
+
+        var time = document.getElementById("time");
+
+        var output = document.getElementById("output");
+
+        function calculateInterest() {
+            //Calculate simple intrest
+            contractInstance.calculateSimpleIntrest(parseInt(principal.value), parseInt(rate.value), parseInt(time.value));
+
+            //Get simple intrest
+            var outputValue = contractInstance.getSimpleIntrest();
+
+            //Set simple intrest to a label
+            output.innerHTML = outputValue;
+        }
+    </script>
+</body>
+
+</html>
